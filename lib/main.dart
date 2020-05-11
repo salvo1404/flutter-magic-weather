@@ -71,47 +71,72 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
+    return Container(
+        decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage('images/storm.jpg'),
+                colorFilter: new ColorFilter.mode(Colors.white.withOpacity(0.8), BlendMode.dstATop),
+                fit: BoxFit.cover
+            )
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            title: Text('Manly'),
+            centerTitle: true,
+            leading: IconButton(
+                icon: Icon(
+                  Icons.list,
+                  color: Colors.white,
+                ),
+                onPressed: () {}),
+          ),
+          body: Column(
+            children: <Widget>[
+              Text(
+                'Overcast, thunderstorms with rain',
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  // fontWeight: FontWeight.bold,
+                  color: Colors.white),
+              ),
+              Padding(
+                padding: EdgeInsets.all(40.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Image(
+                      image: AssetImage('images/rain.png'),
+                      fit: BoxFit.fill,
+                      height: 130,
+                    ),
+                    Text(
+                      '14º',
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        // fontWeight: FontWeight.bold,
+                        fontSize: 100,
+                        color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
+              
+              Expanded(
+                child: FittedBox(
+                  // fit: BoxFit.contain, // otherwise the logo will be tiny
+                  // child: Image(
+                      // image: AssetImage('images/rain-weather-icon-rain-sunny.png'),
+                    // ),
+                ),
+              ),
+            ],
+          )
+        ),
+      );
   }
 }
