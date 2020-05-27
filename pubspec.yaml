@@ -23,6 +23,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  provider: ^3.0.0+1
+  http: ^0.12.0
+  equatable: ^0.1.0
+  intl: ^0.15.8
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -50,6 +54,11 @@ flutter:
     - images/storm.jpg
     - images/rain.png
     - images/rain-weather-icon-rain-sunny.png
+  
+  fonts:
+    - family: WeatherIcons
+      fonts:
+        - asset: fonts/weathericons-regular.ttf
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
