@@ -30,56 +30,60 @@ class _WeatherScreenState extends State<WeatherScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.red,
-          elevation: 0,
-          title: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                DateFormat('EEEE, d MMMM yyyy').format(DateTime.now()),
-                style: TextStyle(
-                    color: Provider.of<AppModel>(context)
-                        .theme
-                        .accentColor
-                        .withAlpha(80),
-                    fontSize: 14),
-              )
+    return Container(
+      decoration: BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage('images/beach.jpg'),
+              colorFilter: new ColorFilter.mode(Colors.white.withOpacity(0.5), BlendMode.dstATop),
+              fit: BoxFit.cover
+          )
+      ),
+      child: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            title: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  DateFormat('EEEE, d MMMM yyyy').format(DateTime.now()),
+                  style: TextStyle(
+                      color: Provider.of<AppModel>(context)
+                          .theme
+                          .accentColor
+                          .withAlpha(80),
+                      fontSize: 14),
+                )
+              ],
+            ),
+            actions: <Widget>[
+              PopupMenuButton<OptionsMenu>(
+                  child: Icon(
+                    Icons.more_vert,
+                    color: Provider.of<AppModel>(context).theme.accentColor,
+                  ),
+                  onSelected: this._onOptionMenuItemSelected,
+                  itemBuilder: (context) => <PopupMenuEntry<OptionsMenu>>[
+                        PopupMenuItem<OptionsMenu>(
+                          value: OptionsMenu.changeCity,
+                          child: Text("Select city"),
+                        ),
+                        PopupMenuItem<OptionsMenu>(
+                          value: OptionsMenu.settings,
+                          child: Text("Settings"),
+                        ),
+                      ])
             ],
           ),
-          actions: <Widget>[
-            PopupMenuButton<OptionsMenu>(
-                child: Icon(
-                  Icons.more_vert,
-                  color: Provider.of<AppModel>(context).theme.accentColor,
-                ),
-                onSelected: this._onOptionMenuItemSelected,
-                itemBuilder: (context) => <PopupMenuEntry<OptionsMenu>>[
-                      PopupMenuItem<OptionsMenu>(
-                        value: OptionsMenu.changeCity,
-                        child: Text("Select city"),
-                      ),
-                      PopupMenuItem<OptionsMenu>(
-                        value: OptionsMenu.settings,
-                        child: Text("Settings"),
-                      ),
-                    ])
-          ],
-        ),
-        backgroundColor: Colors.white,
-        body: Material(
-          child: Container(
+          body: Container(
             constraints: BoxConstraints.expand(),
-            decoration: BoxDecoration(
-                color: Provider.of<AppModel>(context).theme.primaryColor),
+            decoration: BoxDecoration( color: Colors.transparent),
             child: Consumer<WeatherStateModel>(
                 builder: (context, weatherStateModel, _) {
                   var weatherState = weatherStateModel.weatherState;
                   if (weatherState is WeatherLoaded) {
                     this._cityName = weatherState.weather.cityName;
-                      _fadeController.reset();
-                      _fadeController.forward();
                       return Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
@@ -138,8 +142,8 @@ class _WeatherScreenState extends State<WeatherScreen>
                     );
                   }
                 }),
-          ),
-        ));
+          )),
+    );
   }
 
   _onOptionMenuItemSelected(OptionsMenu item) {
