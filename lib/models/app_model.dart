@@ -3,7 +3,7 @@ import 'package:MagicWeather/themes.dart';
 
 import 'dart:math';
 
-class AppState extends ChangeNotifier {
+class AppModel {
   ThemeData _theme = Themes.getTheme(Themes.DARK_THEME_CODE);
   int themeCode = Themes.DARK_THEME_CODE;
 
@@ -12,7 +12,7 @@ class AppState extends ChangeNotifier {
   void setThemeLight() {
     themeCode = Themes.LIGHT_THEME_CODE;
 
-    notifyListeners();
+    // notifyListeners();
   }
 
   /**

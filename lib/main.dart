@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:MagicWeather/state/app_state.dart';
+import 'package:MagicWeather/models/app_model.dart';
 import 'package:MagicWeather/state/weather_state.dart';
 import 'package:MagicWeather/routes/routes.dart';
 import 'package:MagicWeather/screens/weather_screen.dart';
@@ -10,16 +10,17 @@ import 'package:http/http.dart' as http;
 import 'package:MagicWeather/utils/api_keys.dart';
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-
   final WeatherRepository weatherRepository = WeatherRepository(
       weatherApiClient: WeatherApiClient(
-          httpClient: http.Client(), apiKey: ApiKey.OPEN_WEATHER_MAP));
+          httpClient: http.Client(),
+          apiKey: ApiKey.OPEN_WEATHER_MAP
+      )
+  );
 
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => AppState()),
+        Provider(create: (context) => AppModel()),
         ChangeNotifierProvider(create: (context) => WeatherStateModel(
           weatherRepository: weatherRepository
         )),
@@ -30,14 +31,13 @@ void main() {
 }
 
 class WeatherApp extends StatelessWidget {
-  
 
   @override
   Widget build(BuildContext context) {
-    final state = Provider.of<AppState>(context);
+    final appModel = Provider.of<AppModel>(context);
     return MaterialApp(
-      title: 'Flutter Weather App',
-      theme: state.theme,
+      title: 'Magic Weather App',
+      theme: appModel.theme,
       home: WeatherScreen(),
       routes: Routes.mainRoute,
     );

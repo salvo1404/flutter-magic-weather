@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:MagicWeather/state/app_state.dart';
+import 'package:MagicWeather/models/app_model.dart';
 import "package:MagicWeather/state/weather_state.dart";
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -40,7 +40,7 @@ class _WeatherScreenState extends State<WeatherScreen>
               Text(
                 DateFormat('EEEE, d MMMM yyyy').format(DateTime.now()),
                 style: TextStyle(
-                    color: Provider.of<AppState>(context)
+                    color: Provider.of<AppModel>(context)
                         .theme
                         .accentColor
                         .withAlpha(80),
@@ -52,7 +52,7 @@ class _WeatherScreenState extends State<WeatherScreen>
             PopupMenuButton<OptionsMenu>(
                 child: Icon(
                   Icons.more_vert,
-                  color: Provider.of<AppState>(context).theme.accentColor,
+                  color: Provider.of<AppModel>(context).theme.accentColor,
                 ),
                 onSelected: this._onOptionMenuItemSelected,
                 itemBuilder: (context) => <PopupMenuEntry<OptionsMenu>>[
@@ -72,7 +72,7 @@ class _WeatherScreenState extends State<WeatherScreen>
           child: Container(
             constraints: BoxConstraints.expand(),
             decoration: BoxDecoration(
-                color: Provider.of<AppState>(context).theme.primaryColor),
+                color: Provider.of<AppModel>(context).theme.primaryColor),
             child: Consumer<WeatherStateModel>(
                 builder: (context, weatherStateModel, _) {
                   var weatherState = weatherStateModel.weatherState;
@@ -99,7 +99,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                   } else {
                     String errorText = 'Please select a city';
                     if (weatherState is WeatherError && weatherState.errorCode == 404) {
-                        errorText = 'We have trouble fetching weather for $_cityName';
+                        errorText = 'Trouble fetching weather for $_cityName';
                     }
                     return Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -157,12 +157,12 @@ class _WeatherScreenState extends State<WeatherScreen>
     /**
      * Example of stream and async
      */
-    // final appState = Provider.of<AppState>(context);
-    // debugPrint('Debug: $appState');
-    // var value1 = await appState.getRandomValue();
-    // var value2 = await appState.getRandomValue();
+    // final appModel = Provider.of<AppModel>(context);
+    // debugPrint('Debug: $appModel');
+    // var value1 = await appModel.getRandomValue();
+    // var value2 = await appModel.getRandomValue();
 
-    // appState.getRandomValuesStream().listen((value) {
+    // appModel.getRandomValuesStream().listen((value) {
     //   print('1st: $value');
     // });
 
@@ -171,19 +171,7 @@ class _WeatherScreenState extends State<WeatherScreen>
   }
 
   _setWeatherCity(String city) async {
-    /**
-     * Example of stream and async
-     */
-    // final appState = Provider.of<AppState>(context);
-    // debugPrint('Debug: $appState');
-    // var value1 = await appState.getRandomValue();
-    // var value2 = await appState.getRandomValue();
-
-    // appState.getRandomValuesStream().listen((value) {
-    //   print('1st: $value');
-    // });
-
-    final weatherStateModel = Provider.of<WeatherStateModel>(context);
+        final weatherStateModel = Provider.of<WeatherStateModel>(context);
     weatherStateModel.setCity(city);
   }
 

@@ -6,7 +6,7 @@ import 'package:MagicWeather/utils/http_exception.dart';
 import 'package:MagicWeather/repository/weather_repository.dart';
 
 class WeatherStateModel with ChangeNotifier {
-  String city = 'manly';
+  String city = '';
 
   WeatherState weatherState = WeatherEmpty();
 
