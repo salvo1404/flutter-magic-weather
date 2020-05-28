@@ -6,6 +6,8 @@ import 'package:MagicWeather/utils/http_exception.dart';
 import 'package:MagicWeather/repository/weather_repository.dart';
 
 class WeatherStateModel with ChangeNotifier {
+  String city = 'manly';
+
   WeatherState weatherState = WeatherEmpty();
 
   final WeatherRepository weatherRepository;
@@ -13,12 +15,16 @@ class WeatherStateModel with ChangeNotifier {
   WeatherStateModel({@required this.weatherRepository})
       : assert(weatherRepository != null);
 
+  void setCity(String city) {
+    this.city = city;
+  }
+
   void mapFetchWeatherToState() async {
     try {
         final Weather weather = await weatherRepository.getWeather(
-            'tokyo',
-            latitude: 0.04343,
-            longitude: 0.0043);
+            this.city,
+            latitude: 0.0,
+            longitude: 0.0);
         this.weatherState = WeatherLoaded(weather: weather);
       } catch (exception) {
         print(exception);

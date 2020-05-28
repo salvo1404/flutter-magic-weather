@@ -145,7 +145,7 @@ class _WeatherScreenState extends State<WeatherScreen>
   _onOptionMenuItemSelected(OptionsMenu item) {
     switch (item) {
       case OptionsMenu.changeCity:
-        // this._showCityChangeDialog();
+        this._showCityChangeDialog();
         break;
       case OptionsMenu.settings:
         Navigator.of(context).pushNamed("/settings");
@@ -168,5 +168,71 @@ class _WeatherScreenState extends State<WeatherScreen>
 
     final weatherStateModel = Provider.of<WeatherStateModel>(context);
     weatherStateModel.mapFetchWeatherToState();
+  }
+
+  _setWeatherCity(String city) async {
+    /**
+     * Example of stream and async
+     */
+    // final appState = Provider.of<AppState>(context);
+    // debugPrint('Debug: $appState');
+    // var value1 = await appState.getRandomValue();
+    // var value2 = await appState.getRandomValue();
+
+    // appState.getRandomValuesStream().listen((value) {
+    //   print('1st: $value');
+    // });
+
+    final weatherStateModel = Provider.of<WeatherStateModel>(context);
+    weatherStateModel.setCity(city);
+  }
+
+  void _showCityChangeDialog() {
+    showDialog(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: Colors.white,
+            title: Text('Select city', style: TextStyle(color: Colors.black)),
+            actions: <Widget>[
+              FlatButton(
+                child: Text(
+                  'ok',
+                  style: TextStyle(color: Colors.black, fontSize: 16),
+                ),
+                onPressed: () {
+                  _fetchWeatherWithCity();
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+            content: TextField(
+              autofocus: true,
+              onChanged: (text) {
+                _cityName = text;
+                _setWeatherCity(_cityName);
+              },
+              decoration: InputDecoration(
+                  hintText: 'Name of your city',
+                  hintStyle: TextStyle(color: Colors.black),
+                  suffixIcon: GestureDetector(
+                    onTap: () {
+                      _fetchWeatherWithCity().catchError((error) {
+                        // _fetchWeatherWithCity();
+                      });
+                      Navigator.of(context).pop();
+                    },
+                    child: Icon(
+                      Icons.my_location,
+                      color: Colors.black,
+                      size: 16,
+                    ),
+                  )),
+              style: TextStyle(color: Colors.black),
+              cursorColor: Colors.black,
+            ),
+          );
+        });
   }
 }
