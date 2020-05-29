@@ -1,6 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:MagicWeather/utils/weather_icons.dart';
 import 'package:MagicWeather/utils/converters.dart';
+import 'package:meta/meta.dart';
+import 'package:MagicWeather/utils/http_exception.dart';
+import 'package:MagicWeather/repository/weather_repository.dart';
+
+class WeatherModel with ChangeNotifier {
+  String city = '';
+
+  String weatherState = 'empty';
+
+  int errorCode = 0;
+
+  Weather weather;
+
+  final WeatherRepository weatherRepository;
+
+  WeatherModel({@required this.weatherRepository})
+      : assert(weatherRepository != null);
+
+  void setCity(String city) {
+    this.city = city;
+  }
+
+  void mapFetchWeatherToState() async {
+    try {
+        this.weather = await weatherRepository.getWeather(
+            this.city,
+            latitude: 0.0,
+            longitude: 0.0);
+        this.weatherState = 'loaded';
+      } catch (exception) {
+        print(exception);
+        if (exception is HTTPException) {
+          this.weatherState = 'error';
+          this.errorCode = exception.code;
+        } else {
+          this.weatherState = 'error';
+          this.errorCode = 500;
+        }
+    }
+
+    notifyListeners();
+  }
+}
 
 class Weather {
   int id;

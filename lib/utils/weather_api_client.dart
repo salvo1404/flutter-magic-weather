@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:MagicWeather/utils/http_exception.dart';
-import 'package:MagicWeather/models/weather.dart';
+import 'package:MagicWeather/models/weather_model.dart';
 import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
 

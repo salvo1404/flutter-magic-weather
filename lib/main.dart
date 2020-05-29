@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:MagicWeather/models/app_model.dart';
-import 'package:MagicWeather/state/weather_state.dart';
+import 'package:MagicWeather/models/weather_model.dart';
 import 'package:MagicWeather/routes/routes.dart';
 import 'package:MagicWeather/screens/weather_screen.dart';
 import 'package:MagicWeather/repository/weather_repository.dart';

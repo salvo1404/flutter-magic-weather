@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:MagicWeather/models/weather.dart';
+import 'package:MagicWeather/models/weather_model.dart';
 import 'package:MagicWeather/utils/converters.dart';
 
 class WeatherWidget extends StatelessWidget {

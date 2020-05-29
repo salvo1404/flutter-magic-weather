@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:MagicWeather/models/app_model.dart';
-import "package:MagicWeather/state/weather_state.dart";
+import "package:MagicWeather/models/weather_model.dart";
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:MagicWeather/widgets/weather_widget.dart';
@@ -81,14 +81,14 @@ class _WeatherScreenState extends State<WeatherScreen>
             decoration: BoxDecoration( color: Colors.transparent),
             child: Consumer<WeatherModel>(
                 builder: (context, weatherModel, _) {
-                  var weatherState = weatherModel.weatherState;
-                  if (weatherState is WeatherLoaded) {
-                    this._cityName = weatherState.weather.cityName;
+                  
+                  if (weatherModel.weatherState == 'loaded') {
+                    this._cityName = weatherModel.weather.cityName;
                       return Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           WeatherWidget(
-                            weather: weatherState.weather,
+                            weather: weatherModel.weather,
                           ),
                           RaisedButton(
                             child: Text(
@@ -102,7 +102,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                       );
                   } else {
                     String errorText = 'Please select a city';
-                    if (weatherState is WeatherError && weatherState.errorCode == 404) {
+                    if (weatherModel.weatherState == 'error' && weatherModel.errorCode == 404) {
                         errorText = 'Trouble fetching weather for $_cityName';
                     }
                     return Column(

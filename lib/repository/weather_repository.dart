@@ -1,5 +1,5 @@
 import 'package:MagicWeather/utils/weather_api_client.dart';
-import 'package:MagicWeather/models/weather.dart';
+import 'package:MagicWeather/models/weather_model.dart';
 import 'package:meta/meta.dart';
 
 class WeatherRepository {

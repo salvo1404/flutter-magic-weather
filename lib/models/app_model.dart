@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:MagicWeather/themes.dart';
+import 'package:MagicWeather/utils/themes.dart';
 
 import 'dart:math';
 
