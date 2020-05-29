@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:MagicWeather/utils/WeatherIconMapper.dart';
+import 'package:MagicWeather/utils/weather_icons.dart';
 import 'package:MagicWeather/utils/converters.dart';
 
 class Weather {

@@ -21,7 +21,7 @@ void main() {
     MultiProvider(
       providers: [
         Provider(create: (context) => AppModel()),
-        ChangeNotifierProvider(create: (context) => WeatherStateModel(
+        ChangeNotifierProvider(create: (context) => WeatherModel(
           weatherRepository: weatherRepository
         )),
       ],

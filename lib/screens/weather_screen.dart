@@ -79,9 +79,9 @@ class _WeatherScreenState extends State<WeatherScreen>
           body: Container(
             constraints: BoxConstraints.expand(),
             decoration: BoxDecoration( color: Colors.transparent),
-            child: Consumer<WeatherStateModel>(
-                builder: (context, weatherStateModel, _) {
-                  var weatherState = weatherStateModel.weatherState;
+            child: Consumer<WeatherModel>(
+                builder: (context, weatherModel, _) {
+                  var weatherState = weatherModel.weatherState;
                   if (weatherState is WeatherLoaded) {
                     this._cityName = weatherState.weather.cityName;
                       return Column(
@@ -170,13 +170,13 @@ class _WeatherScreenState extends State<WeatherScreen>
     //   print('1st: $value');
     // });
 
-    final weatherStateModel = Provider.of<WeatherStateModel>(context);
-    weatherStateModel.mapFetchWeatherToState();
+    final weatherModel = Provider.of<WeatherModel>(context);
+    weatherModel.mapFetchWeatherToState();
   }
 
   _setWeatherCity(String city) async {
-        final weatherStateModel = Provider.of<WeatherStateModel>(context);
-    weatherStateModel.setCity(city);
+        final weatherModel = Provider.of<WeatherModel>(context);
+    weatherModel.setCity(city);
   }
 
   void _showCityChangeDialog() {

@@ -5,14 +5,14 @@ import 'package:equatable/equatable.dart';
 import 'package:MagicWeather/utils/http_exception.dart';
 import 'package:MagicWeather/repository/weather_repository.dart';
 
-class WeatherStateModel with ChangeNotifier {
+class WeatherModel with ChangeNotifier {
   String city = '';
 
   WeatherState weatherState = WeatherEmpty();
 
   final WeatherRepository weatherRepository;
 
-  WeatherStateModel({@required this.weatherRepository})
+  WeatherModel({@required this.weatherRepository})
       : assert(weatherRepository != null);
 
   void setCity(String city) {
