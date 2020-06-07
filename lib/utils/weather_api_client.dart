@@ -17,6 +17,10 @@ class WeatherApiClient {
 
   Future<String> getCityNameFromLocation(
       {double latitude, double longitude}) async {
+    if (latitude == 0 || longitude == 0) {
+      throw HTTPException(400, "Unable to fetch weather data. Select location");
+    }
+
     final url =
         '$baseUrl/data/2.5/weather?lat=$latitude&lon=$longitude&appid=$apiKey';
     print('fetching $url');
@@ -39,15 +43,15 @@ class WeatherApiClient {
     return Weather.fromJson(weatherJson);
   }
 
-  // Future<List<Weather>> getForecast(String cityName) async {
-  //   final url = '$baseUrl/data/2.5/forecast?q=$cityName&appid=$apiKey';
-  //   print('fetching $url');
-  //   final res = await this.httpClient.get(url);
-  //   if (res.statusCode != 200) {
-  //     throw HTTPException(res.statusCode, "unable to fetch weather data");
-  //   }
-  //   final forecastJson = json.decode(res.body);
-  //   List<Weather> weathers = Weather.fromForecastJson(forecastJson);
-  //   return weathers;
-  // }
+  Future<List<Weather>> getForecast(String cityName) async {
+    final url = '$baseUrl/data/2.5/forecast?q=$cityName&appid=$apiKey';
+    print('fetching $url');
+    final res = await this.httpClient.get(url);
+    if (res.statusCode != 200) {
+      throw HTTPException(res.statusCode, "unable to fetch weather data");
+    }
+    final forecastJson = json.decode(res.body);
+    List<Weather> weathers = Weather.fromForecastJson(forecastJson);
+    return weathers;
+  }
 }

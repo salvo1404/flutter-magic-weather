@@ -8,6 +8,9 @@ import 'package:MagicWeather/repository/weather_repository.dart';
 class WeatherModel with ChangeNotifier {
   String city = '';
 
+  double lat = 0.0;
+  double long = 0.0;
+
   String weatherState = 'empty';
 
   int errorCode = 0;
@@ -19,16 +22,24 @@ class WeatherModel with ChangeNotifier {
   WeatherModel({@required this.weatherRepository})
       : assert(weatherRepository != null);
 
-  void setCity(String city) {
+  void setCity(String city) async {
     this.city = city;
+
+    if(city == '') {
+      this.weatherState = 'empty';
+    }
+
+    notifyListeners();
+  }
+
+  void setLocation(double lat, double long) async {
+    this.lat = lat;
+    this.long = long;
   }
 
   void mapFetchWeatherToState() async {
     try {
-        this.weather = await weatherRepository.getWeather(
-            this.city,
-            latitude: 0.0,
-            longitude: 0.0);
+        this.weather = await weatherRepository.getWeather(this.city, latitude: this.lat, longitude: this.long);
         this.weatherState = 'loaded';
       } catch (exception) {
         print(exception);

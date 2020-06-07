@@ -4,6 +4,8 @@ import "package:MagicWeather/models/weather_model.dart";
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:MagicWeather/widgets/weather_widget.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 enum OptionsMenu { changeCity, settings }
 
@@ -14,18 +16,18 @@ class WeatherScreen extends StatefulWidget {
 
 class _WeatherScreenState extends State<WeatherScreen>
     with TickerProviderStateMixin {
-  String _cityName = 'bengaluru';
-  AnimationController _fadeController;
-  Animation<double> _fadeAnimation;
+      String _cityName;
+  // AnimationController _fadeController;
+  // Animation<double> _fadeAnimation;
 
 @override
   void initState() {
     super.initState();
-    _fadeController = AnimationController(
-        duration: const Duration(milliseconds: 1000), vsync: this);
-    _fadeAnimation =
-        CurvedAnimation(parent: _fadeController, curve: Curves.easeIn);
-    // _fetchWeatherWithCity();
+    // _fadeController = AnimationController(
+    //     duration: const Duration(milliseconds: 1000), vsync: this);
+    // _fadeAnimation =
+    //     CurvedAnimation(parent: _fadeController, curve: Curves.easeIn);
+    // _fetchWeatherWithLocation();
   }
 
   @override
@@ -34,7 +36,7 @@ class _WeatherScreenState extends State<WeatherScreen>
       decoration: BoxDecoration(
           image: DecorationImage(
               image: AssetImage('images/beach.jpg'),
-              colorFilter: new ColorFilter.mode(Colors.white.withOpacity(0.5), BlendMode.dstATop),
+              colorFilter: new ColorFilter.mode(Colors.white.withOpacity(0.3), BlendMode.dstATop),
               fit: BoxFit.cover
           )
       ),
@@ -90,14 +92,31 @@ class _WeatherScreenState extends State<WeatherScreen>
                           WeatherWidget(
                             weather: weatherModel.weather,
                           ),
-                          RaisedButton(
-                            child: Text(
-                              "Fetch Again",
-                              style: TextStyle(
-                                  color: Colors.redAccent),
-                            ),
-                            onPressed: _fetchWeatherWithCity,
-                          )
+                          
+                          Padding(
+                            padding: EdgeInsets.all(10),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              RaisedButton(
+                                child: Text(
+                                  "Fetch Again",
+                                  style: TextStyle(
+                                      color: Colors.redAccent),
+                                ),
+                                onPressed: _fetchWeatherWithCity,
+                              ),
+                              RaisedButton(
+                                child: Text(
+                                  "Reset City",
+                                  style: TextStyle(
+                                      color: Colors.redAccent),
+                                ),
+                                onPressed: _setWeatherCity,
+                              ),
+                            ],
+                          ),
                         ]
                       );
                   } else {
@@ -132,11 +151,11 @@ class _WeatherScreenState extends State<WeatherScreen>
                         ),
                         RaisedButton(
                           child: Text(
-                            "Try Again",
+                            "Set city from location",
                             style: TextStyle(
                                 color: Colors.redAccent),
                           ),
-                          onPressed: _fetchWeatherWithCity,
+                          onPressed: _fetchWeatherWithLocation,
                         )
                       ],
                     );
@@ -157,6 +176,16 @@ class _WeatherScreenState extends State<WeatherScreen>
     }
   }
 
+  _setWeatherCity({String city = ''}) async {
+    final weatherModel = Provider.of<WeatherModel>(context);
+    weatherModel.setCity(city);
+  }
+
+  _setWeatherLocation(double lat, double long) async {
+    final weatherModel = Provider.of<WeatherModel>(context);
+    weatherModel.setLocation(lat, long);
+  }
+
   _fetchWeatherWithCity() async {
     /**
      * Example of stream and async
@@ -174,9 +203,55 @@ class _WeatherScreenState extends State<WeatherScreen>
     weatherModel.mapFetchWeatherToState();
   }
 
-  _setWeatherCity(String city) async {
-        final weatherModel = Provider.of<WeatherModel>(context);
-    weatherModel.setCity(city);
+  _fetchWeatherWithLocation() async {
+    var permissionHandler = PermissionHandler();
+
+    var permissionResult = await permissionHandler
+        .requestPermissions([PermissionGroup.locationWhenInUse]);
+
+    switch (permissionResult[PermissionGroup.locationWhenInUse]) {
+      case PermissionStatus.denied:
+      case PermissionStatus.unknown:
+        print('location permission denied');
+        _showLocationDeniedDialog(permissionHandler);
+        // throw Error();
+    }
+
+    GeolocationStatus geolocationStatus  = await Geolocator().checkGeolocationPermissionStatus();
+    debugPrint('Debug: $geolocationStatus');
+
+    Position position = await Geolocator()
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    debugPrint('Debug: $position');
+    
+    _setWeatherLocation(position.latitude, position.longitude);
+
+    _fetchWeatherWithCity();
+  }
+
+  void _showLocationDeniedDialog(PermissionHandler permissionHandler) {
+    showDialog(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: Colors.white,
+            title: Text('Location is disabled :(',
+                style: TextStyle(color: Colors.black)),
+            actions: <Widget>[
+              FlatButton(
+                child: Text(
+                  'Enable!',
+                  style: TextStyle(color: Colors.green, fontSize: 16),
+                ),
+                onPressed: () {
+                  permissionHandler.openAppSettings();
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
   }
 
   void _showCityChangeDialog() {
@@ -203,7 +278,7 @@ class _WeatherScreenState extends State<WeatherScreen>
               autofocus: true,
               onChanged: (text) {
                 _cityName = text;
-                _setWeatherCity(_cityName);
+                _setWeatherCity(city: _cityName);
               },
               decoration: InputDecoration(
                   hintText: 'Name of your city',

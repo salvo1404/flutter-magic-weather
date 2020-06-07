@@ -15,18 +15,14 @@ class AppModel {
     // notifyListeners();
   }
 
-  /**
-   * Example of async
-   */
+  // Example of async
   Future<double> getRandomValue() async {
     var random = Random(2);
     await Future.delayed(Duration(seconds: 1));
     return random.nextDouble();
   }
 
-  /**
-   * Example of Stream
-   */
+  // Example of async
   Stream<double> getRandomValuesStream() async* {
     var random = Random(2);
     
