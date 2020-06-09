@@ -11,9 +11,8 @@ class WeatherWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<int> days = [0,1,2,3,4];
+    List<int> days = [1,2];
     var today = new DateTime.now();
-    var expanded = false;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -64,7 +63,40 @@ class WeatherWidget extends StatelessWidget {
             padding: EdgeInsets.all(10),
           ),
           
-          
+          Column(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(left:15, right:5),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      DateFormat('EEEE').format(today),
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 3,
+                          color: Colors.white,
+                          fontSize: 15,),
+                    ),
+                    SizedBox(
+                      width: 5,
+                    ),
+                  ],
+                ),
+              ),
+              Divider(
+                color:
+                    Colors.white,
+              ),
+              ForecastHorizontal(weathers: weather.forecast),
+              Divider(
+                color:
+                    Colors.white,
+              ),
+            ],
+          ),
+
           ListView.builder(
             scrollDirection: Axis.vertical,
             shrinkWrap: true,
@@ -72,11 +104,7 @@ class WeatherWidget extends StatelessWidget {
             padding: EdgeInsets.only(top: 0, bottom: 0),
             itemBuilder: (context, index) {
               final day = days[index];
-              if(index == 0) {
-                expanded = true;
-              } else {
-                expanded = false;
-              }
+
               // Hack to remove ExpansiontTile divider colours
               final theme = Theme.of(context).copyWith(dividerColor: Colors.transparent);
     
@@ -103,7 +131,7 @@ class WeatherWidget extends StatelessWidget {
                           ),
                         ],
                       ),
-                      initiallyExpanded: expanded,
+                      initiallyExpanded: false,
                       trailing: SizedBox(
                           width: 5,
                         ),
@@ -112,7 +140,7 @@ class WeatherWidget extends StatelessWidget {
                           color:
                               Colors.white,
                         ),
-                        ForecastHorizontal(weathers: weather.forecast),
+                        ForecastHorizontal(weathers: _filterForecastByDay(weather.forecast, day)),
                         Divider(
                           color:
                               Colors.white,
@@ -132,5 +160,18 @@ class WeatherWidget extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  List<Weather> _filterForecastByDay(List<Weather> weathers, int day) {
+      TimeOfDay timeOfDay = TimeOfDay.now();
+      var offsetMidnight = DateTime.now().add(new Duration(days: day-1, hours: 23-timeOfDay.hour, minutes: 59-timeOfDay.minute));
+
+      var dayWeathers = weathers.where((item) {
+        var forecastDate = new DateTime.fromMillisecondsSinceEpoch(item.time * 1000);
+
+        return forecastDate.isAfter(offsetMidnight);
+    }).toList();
+
+    return dayWeathers;
   }
 }
