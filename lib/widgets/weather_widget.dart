@@ -11,7 +11,7 @@ class WeatherWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<int> days = [1,2,3,4];
+    List<int> days = [0,1,2,3,4,5];
     var today = new DateTime.now();
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -61,40 +61,6 @@ class WeatherWidget extends StatelessWidget {
         Padding(
           padding: EdgeInsets.all(10),
         ),
-        
-        Column(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(left:15, right:5),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    DateFormat('EEEE').format(today),
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 3,
-                        color: Colors.white,
-                        fontSize: 15,),
-                  ),
-                  SizedBox(
-                    width: 5,
-                  ),
-                ],
-              ),
-            ),
-            Divider(
-              color:
-                  Colors.white,
-            ),
-            ForecastHorizontal(weathers: weather.forecast),
-            Divider(
-              color:
-                  Colors.white,
-            ),
-          ],
-        ),
 
         ListView.builder(
           scrollDirection: Axis.vertical,
@@ -122,19 +88,33 @@ class WeatherWidget extends StatelessWidget {
                           textAlign: TextAlign.left,
                           style: TextStyle(
                               fontWeight: FontWeight.w900,
-                              letterSpacing: 3,
+                              letterSpacing: 2,
                               color: Colors.white,
                               fontSize: 15,),
                         ),
                         SizedBox(
-                          width: 5,
+                          width: 10,
+                        ),
+                        if (index==0)
+                        Text(
+                          'TODAY',
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              letterSpacing: 1,
+                              color: Colors.white,
+                              fontSize: 15,),
                         ),
                       ],
                     ),
-                    initiallyExpanded: false,
-                    trailing: SizedBox(
-                        width: 5,
+                    initiallyExpanded: index==0,
+                    trailing: Text(
+                      '${weather.forecast[index].temperature.as(TemperatureUnit.celsius).round()}°',
+                      style: TextStyle(
+                          fontWeight: FontWeight.w300,
+                          color: Colors.white,
                       ),
+                    ),
                     children: <Widget>[
                       Divider(
                         color:
