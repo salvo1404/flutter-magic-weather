@@ -83,28 +83,39 @@ class WeatherWidget extends StatelessWidget {
                     title: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
-                        Text(
-                          DateFormat('EEEE').format(today.add(new Duration(days: day))),
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: 2,
-                              color: Colors.white,
-                              fontSize: 15,),
+                        SizedBox(
+                          width: 120,
+                          child: Text(
+                            DateFormat('EEEE').format(today.add(new Duration(days: day))),
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 2,
+                                color: Colors.white,
+                                fontSize: 15,),
+                          ),
                         ),
                         SizedBox(
-                          width: 10,
+                          width: 80,
+                          child: Text(
+                            (index==0) ? 'TODAY' : '',
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                letterSpacing: 1,
+                                color: Colors.white,
+                                fontSize: 15,),
+                          ),
                         ),
-                        if (index==0)
-                        Text(
-                          'TODAY',
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              letterSpacing: 1,
-                              color: Colors.white,
-                              fontSize: 15,),
+                        SizedBox(
+                          width: 50,
+                          child: Icon(
+                            weather.forecast[index].getIconData(),
+                            color: Colors.white,
+                            size: 15,
+                          ),
                         ),
+                        
                       ],
                     ),
                     initiallyExpanded: index==0,
