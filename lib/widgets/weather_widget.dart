@@ -11,7 +11,7 @@ class WeatherWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<int> days = [0,1,2];
+    List<int> days = [0,1,2,3,4];
     var today = new DateTime.now();
     var expanded = false;
     return Center(
@@ -77,42 +77,48 @@ class WeatherWidget extends StatelessWidget {
               } else {
                 expanded = false;
               }
+              // Hack to remove ExpansiontTile divider colours
+              final theme = Theme.of(context).copyWith(dividerColor: Colors.transparent);
+    
               return Column(
                 children: <Widget>[
                   
-                  ExpansionTile(
-                    title: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          DateFormat('EEEE').format(today.add(new Duration(days: day))),
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: 3,
-                              color: Colors.white,
-                              fontSize: 15,),
-                        ),
-                        SizedBox(
+                  Theme(
+                    data: theme,
+                    child: ExpansionTile(
+                      title: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            DateFormat('EEEE').format(today.add(new Duration(days: day))),
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 3,
+                                color: Colors.white,
+                                fontSize: 15,),
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+                        ],
+                      ),
+                      initiallyExpanded: expanded,
+                      trailing: SizedBox(
                           width: 5,
+                        ),
+                      children: <Widget>[
+                        Divider(
+                          color:
+                              Colors.white,
+                        ),
+                        ForecastHorizontal(weathers: weather.forecast),
+                        Divider(
+                          color:
+                              Colors.white,
                         ),
                       ],
                     ),
-                    initiallyExpanded: expanded,
-                    trailing: SizedBox(
-                        width: 5,
-                      ),
-                    children: <Widget>[
-                      Divider(
-                        color:
-                            Colors.white,
-                      ),
-                      ForecastHorizontal(weathers: weather.forecast),
-                      Divider(
-                        color:
-                            Colors.white,
-                      ),
-                    ],
                   ),
 
                 ],
