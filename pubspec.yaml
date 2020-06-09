@@ -55,6 +55,7 @@ flutter:
     - images/beach.jpg
     - images/storm.jpg
     - images/rain.png
+    - images/clear-sky.jpg
     - images/rain-weather-icon-rain-sunny.png
   
   fonts:

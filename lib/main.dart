@@ -8,8 +8,14 @@ import 'package:MagicWeather/repository/weather_repository.dart';
 import 'package:MagicWeather/utils/weather_api_client.dart';
 import 'package:http/http.dart' as http;
 import 'package:MagicWeather/utils/api_keys.dart';
+import 'package:flutter/services.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  SystemChrome.setPreferredOrientations(
+     [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+
   final WeatherRepository weatherRepository = WeatherRepository(
       weatherApiClient: WeatherApiClient(
           httpClient: http.Client(),

@@ -35,8 +35,8 @@ class _WeatherScreenState extends State<WeatherScreen>
     return Container(
       decoration: BoxDecoration(
           image: DecorationImage(
-              image: AssetImage('images/beach.jpg'),
-              colorFilter: new ColorFilter.mode(Colors.white.withOpacity(0.3), BlendMode.dstATop),
+              image: AssetImage('images/clear-sky.jpg'),
+              colorFilter: new ColorFilter.mode(Colors.white.withOpacity(0.8), BlendMode.dstATop),
               fit: BoxFit.cover
           )
       ),
@@ -53,8 +53,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                   style: TextStyle(
                       color: Provider.of<AppModel>(context)
                           .theme
-                          .accentColor
-                          .withAlpha(80),
+                          .accentColor,
                       fontSize: 14),
                 )
               ],
