@@ -100,6 +100,7 @@ class WeatherWidget extends StatelessWidget {
           scrollDirection: Axis.vertical,
           shrinkWrap: true,
           itemCount: days.length,
+          physics: NeverScrollableScrollPhysics(),
           padding: EdgeInsets.only(top: 0, bottom: 0),
           itemBuilder: (context, index) {
             final day = days[index];

@@ -80,7 +80,8 @@ class _WeatherScreenState extends State<WeatherScreen>
           ),
           body: Container(
             constraints: BoxConstraints.expand(),
-            child: Consumer<WeatherModel>(
+            child: SingleChildScrollView(
+              child: Consumer<WeatherModel>(
                 builder: (context, weatherModel, _) {
                   
                   if (weatherModel.weatherState == 'loaded') {
@@ -115,6 +116,9 @@ class _WeatherScreenState extends State<WeatherScreen>
                                 onPressed: _setWeatherCity,
                               ),
                             ],
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(20),
                           ),
                         ]
                       );
@@ -160,6 +164,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                     );
                   }
                 }),
+            ),
           )),
     );
   }
