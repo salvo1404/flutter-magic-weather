@@ -41,6 +41,7 @@ class _WeatherScreenState extends State<WeatherScreen>
           )
       ),
       child: Scaffold(
+          resizeToAvoidBottomPadding: false,
           backgroundColor: Colors.transparent,
           appBar: AppBar(
             backgroundColor: Colors.transparent,
@@ -79,7 +80,6 @@ class _WeatherScreenState extends State<WeatherScreen>
           ),
           body: Container(
             constraints: BoxConstraints.expand(),
-            decoration: BoxDecoration( color: Colors.transparent),
             child: Consumer<WeatherModel>(
                 builder: (context, weatherModel, _) {
                   
