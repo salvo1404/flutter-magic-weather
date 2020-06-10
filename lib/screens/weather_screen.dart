@@ -26,7 +26,7 @@ class _WeatherScreenState extends State<WeatherScreen> with TickerProviderStateM
     //     duration: const Duration(milliseconds: 1000), vsync: this);
     // _fadeAnimation =
     //     CurvedAnimation(parent: _fadeController, curve: Curves.easeIn);
-    // _fetchWeatherWithLocation();
+    _fetchWeatherWithLocation();
   }
 
   @override
@@ -130,7 +130,7 @@ class _WeatherScreenState extends State<WeatherScreen> with TickerProviderStateM
                           ),
                         ]
                       );
-                  } else {
+                  } else if (weatherModel.weatherState == 'error') {
                     String errorText = 'Please select a city';
                     if (weatherModel.weatherState == 'error' && weatherModel.errorCode == 404) {
                         errorText = 'Trouble fetching weather for $_cityName';
@@ -168,6 +168,34 @@ class _WeatherScreenState extends State<WeatherScreen> with TickerProviderStateM
                           ),
                           onPressed: _fetchWeatherWithLocation,
                         )
+                      ],
+                    );
+                  } else {
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Center(
+                          heightFactor: 10,
+                          child: CircularProgressIndicator(
+                            // value: .5,
+                            // strokeWidth: 50,
+                            valueColor: new AlwaysStoppedAnimation<Color>(
+                                Colors.green
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 20.0),
+                        ),
+                        Text(
+                          'Loading',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 3,
+                            fontSize: 50,
+                            color: Colors.white
+                          ),
+                        ),
                       ],
                     );
                   }
