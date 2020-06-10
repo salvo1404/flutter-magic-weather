@@ -14,13 +14,12 @@ class WeatherScreen extends StatefulWidget {
   _WeatherScreenState createState() => _WeatherScreenState();
 }
 
-class _WeatherScreenState extends State<WeatherScreen>
-    with TickerProviderStateMixin {
-      String _cityName;
+class _WeatherScreenState extends State<WeatherScreen> with TickerProviderStateMixin {
+  String _cityName;
   // AnimationController _fadeController;
   // Animation<double> _fadeAnimation;
 
-@override
+  @override
   void initState() {
     super.initState();
     // _fadeController = AnimationController(
@@ -43,6 +42,36 @@ class _WeatherScreenState extends State<WeatherScreen>
       child: Scaffold(
           resizeToAvoidBottomPadding: false,
           backgroundColor: Colors.transparent,
+          bottomNavigationBar: SizedBox(
+            height: 85,
+            child: Column(
+              children: <Widget>[
+                Divider(color: Colors.white, thickness: 1,),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      RaisedButton(
+                        child: Text(
+                          "Fetch Again",
+                          style: TextStyle(
+                              color: Colors.redAccent),
+                        ),
+                        onPressed: _fetchWeatherWithCity,
+                      ),
+                      RaisedButton(
+                        child: Text(
+                          "Reset City",
+                          style: TextStyle(
+                              color: Colors.redAccent),
+                        ),
+                        onPressed: _setWeatherCity,
+                      ),
+                    ],
+                  ),
+
+              ],
+            ),
+          ),
           appBar: AppBar(
             backgroundColor: Colors.transparent,
             elevation: 0,
@@ -96,27 +125,6 @@ class _WeatherScreenState extends State<WeatherScreen>
                           Padding(
                             padding: EdgeInsets.all(10),
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: <Widget>[
-                              RaisedButton(
-                                child: Text(
-                                  "Fetch Again",
-                                  style: TextStyle(
-                                      color: Colors.redAccent),
-                                ),
-                                onPressed: _fetchWeatherWithCity,
-                              ),
-                              RaisedButton(
-                                child: Text(
-                                  "Reset City",
-                                  style: TextStyle(
-                                      color: Colors.redAccent),
-                                ),
-                                onPressed: _setWeatherCity,
-                              ),
-                            ],
-                          ),
                           Padding(
                             padding: EdgeInsets.all(20),
                           ),
@@ -165,7 +173,8 @@ class _WeatherScreenState extends State<WeatherScreen>
                   }
                 }),
             ),
-          )),
+          )
+        ),
     );
   }
 
