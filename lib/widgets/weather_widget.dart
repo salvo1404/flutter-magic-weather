@@ -231,7 +231,7 @@ class WeatherWidget extends StatelessWidget {
         var forecastDate = new DateTime.fromMillisecondsSinceEpoch(item.time * 1000);
 
         return forecastDate.isAfter(offsetMidnight);
-    }).toList();
+      }).toList();
 
     return dayWeathers;
   }

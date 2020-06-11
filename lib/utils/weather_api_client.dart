@@ -3,6 +3,7 @@ import 'package:MagicWeather/utils/http_exception.dart';
 import 'package:MagicWeather/models/weather_model.dart';
 import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Wrapper around the open weather map api
 /// https://openweathermap.org/current
@@ -29,6 +30,7 @@ class WeatherApiClient {
       throw HTTPException(res.statusCode, "unable to fetch weather data");
     }
     final weatherJson = json.decode(res.body);
+    _saveStringSharedPreferences('city',weatherJson['name']);
     return weatherJson['name'];
   }
 
@@ -39,6 +41,7 @@ class WeatherApiClient {
     if (res.statusCode != 200) {
       throw HTTPException(res.statusCode, "unable to fetch weather data");
     }
+    _saveStringSharedPreferences('weather',res.body);
     final weatherJson = json.decode(res.body);
     return Weather.fromJson(weatherJson);
   }
@@ -50,8 +53,16 @@ class WeatherApiClient {
     if (res.statusCode != 200) {
       throw HTTPException(res.statusCode, "unable to fetch weather data");
     }
+    _saveStringSharedPreferences('forecast',res.body);
     final forecastJson = json.decode(res.body);
     List<Weather> weathers = Weather.fromForecastJson(forecastJson);
     return weathers;
+  }
+
+  _saveStringSharedPreferences(String key, String value) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    prefs.setString(key, value);
+    print('Saved $key: $value');
   }
 }

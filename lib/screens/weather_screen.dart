@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:MagicWeather/widgets/weather_widget.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 enum OptionsMenu { changeCity, settings }
 
@@ -15,7 +16,7 @@ class WeatherScreen extends StatefulWidget {
 }
 
 class _WeatherScreenState extends State<WeatherScreen> with TickerProviderStateMixin {
-  String _cityName;
+  String _cityName = '';
   // AnimationController _fadeController;
   // Animation<double> _fadeAnimation;
 
@@ -26,7 +27,8 @@ class _WeatherScreenState extends State<WeatherScreen> with TickerProviderStateM
     //     duration: const Duration(milliseconds: 1000), vsync: this);
     // _fadeAnimation =
     //     CurvedAnimation(parent: _fadeController, curve: Curves.easeIn);
-    _fetchWeatherWithLocation();
+
+    // _loadWeatherFromMemory();
   }
 
   @override
@@ -52,7 +54,7 @@ class _WeatherScreenState extends State<WeatherScreen> with TickerProviderStateM
                     children: <Widget>[
                       RaisedButton(
                         child: Text(
-                          "Fetch Again",
+                          "Fetch data",
                           style: TextStyle(
                               color: Colors.redAccent),
                         ),
@@ -60,11 +62,19 @@ class _WeatherScreenState extends State<WeatherScreen> with TickerProviderStateM
                       ),
                       RaisedButton(
                         child: Text(
+                          "Refresh",
+                          style: TextStyle(
+                              color: Colors.redAccent),
+                        ),
+                        onPressed: _refreshWeatherData,
+                      ),
+                      RaisedButton(
+                        child: Text(
                           "Reset City",
                           style: TextStyle(
                               color: Colors.redAccent),
                         ),
-                        onPressed: _setWeatherCity,
+                        onPressed: _resetWeatherCity,
                       ),
                     ],
                   ),
@@ -112,7 +122,11 @@ class _WeatherScreenState extends State<WeatherScreen> with TickerProviderStateM
             child: SingleChildScrollView(
               child: Consumer<WeatherModel>(
                 builder: (context, weatherModel, _) {
-                  
+                  if (weatherModel.weatherState == 'empty') {
+                    weatherModel.loadWeatherFromShared();
+                    weatherModel.refreshWeather(3);
+                  }
+
                   if (weatherModel.weatherState == 'loaded') {
                     this._cityName = weatherModel.weather.cityName;
                       return Column(
@@ -166,7 +180,7 @@ class _WeatherScreenState extends State<WeatherScreen> with TickerProviderStateM
                             style: TextStyle(
                                 color: Colors.redAccent),
                           ),
-                          onPressed: _fetchWeatherWithLocation,
+                          onPressed: _fetchWeatherWithCity(),
                         )
                       ],
                     );
@@ -174,18 +188,8 @@ class _WeatherScreenState extends State<WeatherScreen> with TickerProviderStateM
                     return Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Center(
-                          heightFactor: 10,
-                          child: CircularProgressIndicator(
-                            // value: .5,
-                            // strokeWidth: 50,
-                            valueColor: new AlwaysStoppedAnimation<Color>(
-                                Colors.green
-                            ),
-                          ),
-                        ),
                         Padding(
-                          padding: const EdgeInsets.only(top: 20.0),
+                          padding: const EdgeInsets.only(top: 200.0),
                         ),
                         Text(
                           'Loading',
@@ -217,14 +221,18 @@ class _WeatherScreenState extends State<WeatherScreen> with TickerProviderStateM
     }
   }
 
-  _setWeatherCity({String city = ''}) async {
-    final weatherModel = Provider.of<WeatherModel>(context);
-    weatherModel.setCity(city);
-  }
+  _resetWeatherCity() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove('weather');
+    prefs.remove('forecast');
+    prefs.remove('city');
+    print('Reset weather shared');
+    print('Reset forecast shared');
+    print('Reset city shared');
 
-  _setWeatherLocation(double lat, double long) async {
     final weatherModel = Provider.of<WeatherModel>(context);
-    weatherModel.setLocation(lat, long);
+    weatherModel.setCity('');
+    _cityName = '';
   }
 
   _fetchWeatherWithCity() async {
@@ -241,10 +249,18 @@ class _WeatherScreenState extends State<WeatherScreen> with TickerProviderStateM
     // });
 
     final weatherModel = Provider.of<WeatherModel>(context);
+
+    weatherModel.setCity(_cityName);
+
+    if (_cityName == '') {
+      Position position = await _retrieveGeolocalization();
+      weatherModel.setLocation(position.latitude, position.longitude);
+    }
+
     weatherModel.mapFetchWeatherToState();
   }
 
-  _fetchWeatherWithLocation() async {
+  Future<Position> _retrieveGeolocalization() async {
     var permissionHandler = PermissionHandler();
 
     var permissionResult = await permissionHandler
@@ -264,10 +280,13 @@ class _WeatherScreenState extends State<WeatherScreen> with TickerProviderStateM
     Position position = await Geolocator()
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     debugPrint('Debug: $position');
-    
-    _setWeatherLocation(position.latitude, position.longitude);
 
-    _fetchWeatherWithCity();
+    return position;
+  }
+
+  _refreshWeatherData() {
+    final weatherModel = Provider.of<WeatherModel>(context);
+    weatherModel.refreshWeather(0);
   }
 
   void _showLocationDeniedDialog(PermissionHandler permissionHandler) {
@@ -319,16 +338,12 @@ class _WeatherScreenState extends State<WeatherScreen> with TickerProviderStateM
               autofocus: true,
               onChanged: (text) {
                 _cityName = text;
-                _setWeatherCity(city: _cityName);
               },
               decoration: InputDecoration(
                   hintText: 'Name of your city',
                   hintStyle: TextStyle(color: Colors.black),
                   suffixIcon: GestureDetector(
                     onTap: () {
-                      _fetchWeatherWithCity().catchError((error) {
-                        // _fetchWeatherWithCity();
-                      });
                       Navigator.of(context).pop();
                     },
                     child: Icon(

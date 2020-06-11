@@ -1,9 +1,11 @@
+import 'package:meta/meta.dart';
 import 'package:flutter/material.dart';
+import 'dart:convert';
 import 'package:MagicWeather/utils/weather_icons.dart';
 import 'package:MagicWeather/utils/converters.dart';
-import 'package:meta/meta.dart';
 import 'package:MagicWeather/utils/http_exception.dart';
 import 'package:MagicWeather/repository/weather_repository.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class WeatherModel with ChangeNotifier {
   String city = '';
@@ -37,6 +39,14 @@ class WeatherModel with ChangeNotifier {
     this.long = long;
   }
 
+  void refreshWeather(int delay) async {
+    await Future.delayed(Duration(seconds: delay));
+    print('refresh');
+    if(this.city != '') {
+      mapFetchWeatherToState();
+    }
+  }
+
   void mapFetchWeatherToState() async {
     try {
         this.weather = await weatherRepository.getWeather(this.city, latitude: this.lat, longitude: this.long);
@@ -53,6 +63,34 @@ class WeatherModel with ChangeNotifier {
     }
 
     notifyListeners();
+  }
+
+  void loadWeatherFromShared() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final weatherJson = prefs.getString('weather') ?? '';
+    print('Load Weather: $weatherJson');
+
+    if (weatherJson != '') {
+      var weatherJsonString = json.decode(weatherJson);
+      this.weather = Weather.fromJson(weatherJsonString);
+
+      final forecastJson = prefs.getString('forecast') ?? '';
+      print('Load Forecast: $forecastJson');
+      List<Weather> weathers = Weather.fromForecastJson(json.decode(forecastJson));
+      this.weather.forecast = weathers;
+
+      this.city = this.weather.cityName;
+      this.weatherState = 'loaded';
+      notifyListeners();
+    }
+
+    // infite loop of notifier
+    // final city = prefs.getString('city') ?? '';
+    // print('Load City: $city');
+    // if (city != '') {
+    //   setCity(city);
+    // }
   }
 }
 
