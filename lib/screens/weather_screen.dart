@@ -124,7 +124,7 @@ class _WeatherScreenState extends State<WeatherScreen> with TickerProviderStateM
                 builder: (context, weatherModel, _) {
                   if (weatherModel.weatherState == 'empty') {
                     weatherModel.loadWeatherFromShared();
-                    weatherModel.refreshWeather(3);
+                    weatherModel.refreshWeather(2);
                   }
 
                   if (weatherModel.weatherState == 'loaded') {
