@@ -15,7 +15,8 @@ class WeatherScreen extends StatefulWidget {
   _WeatherScreenState createState() => _WeatherScreenState();
 }
 
-class _WeatherScreenState extends State<WeatherScreen> with TickerProviderStateMixin {
+class _WeatherScreenState extends State<WeatherScreen>
+    with TickerProviderStateMixin {
   String _cityName = '';
   // AnimationController _fadeController;
   // Animation<double> _fadeAnimation;
@@ -37,48 +38,46 @@ class _WeatherScreenState extends State<WeatherScreen> with TickerProviderStateM
       decoration: BoxDecoration(
           image: DecorationImage(
               image: AssetImage('images/clear-sky.jpg'),
-              colorFilter: new ColorFilter.mode(Colors.white.withOpacity(0.8), BlendMode.dstATop),
-              fit: BoxFit.cover
-          )
-      ),
+              colorFilter: new ColorFilter.mode(
+                  Colors.white.withOpacity(0.8), BlendMode.dstATop),
+              fit: BoxFit.cover)),
       child: Scaffold(
-          resizeToAvoidBottomPadding: false,
+          resizeToAvoidBottomInset: false,
           backgroundColor: Colors.transparent,
           bottomNavigationBar: SizedBox(
             height: 85,
             child: Column(
               children: <Widget>[
-                Divider(color: Colors.white, thickness: 1,),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      RaisedButton(
-                        child: Text(
-                          "Fetch data",
-                          style: TextStyle(
-                              color: Colors.redAccent),
-                        ),
-                        onPressed: _fetchWeatherWithCity,
+                Divider(
+                  color: Colors.white,
+                  thickness: 1,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    ElevatedButton(
+                      child: Text(
+                        "Fetch data",
+                        style: TextStyle(color: Colors.redAccent),
                       ),
-                      RaisedButton(
-                        child: Text(
-                          "Refresh",
-                          style: TextStyle(
-                              color: Colors.redAccent),
-                        ),
-                        onPressed: _refreshWeatherData,
+                      onPressed: _fetchWeatherWithCity,
+                    ),
+                    ElevatedButton(
+                      child: Text(
+                        "Refresh",
+                        style: TextStyle(color: Colors.redAccent),
                       ),
-                      RaisedButton(
-                        child: Text(
-                          "Reset City",
-                          style: TextStyle(
-                              color: Colors.redAccent),
-                        ),
-                        onPressed: _resetWeatherCity,
+                      onPressed: _refreshWeatherData,
+                    ),
+                    ElevatedButton(
+                      child: Text(
+                        "Reset City",
+                        style: TextStyle(color: Colors.redAccent),
                       ),
-                    ],
-                  ),
-
+                      onPressed: _resetWeatherCity,
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -91,9 +90,7 @@ class _WeatherScreenState extends State<WeatherScreen> with TickerProviderStateM
                 Text(
                   DateFormat('EEEE, d MMMM yyyy').format(DateTime.now()),
                   style: TextStyle(
-                      color: Provider.of<AppModel>(context)
-                          .theme
-                          .accentColor,
+                      color: Provider.of<AppModel>(context).theme.accentColor,
                       fontSize: 14),
                 )
               ],
@@ -120,93 +117,85 @@ class _WeatherScreenState extends State<WeatherScreen> with TickerProviderStateM
           body: Container(
             constraints: BoxConstraints.expand(),
             child: SingleChildScrollView(
-              child: Consumer<WeatherModel>(
-                builder: (context, weatherModel, _) {
-                  if (weatherModel.weatherState == 'empty') {
-                    weatherModel.loadWeatherFromShared();
-                    weatherModel.refreshWeather(2);
-                  }
+              child:
+                  Consumer<WeatherModel>(builder: (context, weatherModel, _) {
+                if (weatherModel.weatherState == 'empty') {
+                  weatherModel.loadWeatherFromShared();
+                  weatherModel.refreshWeather(2);
+                }
 
-                  if (weatherModel.weatherState == 'loaded') {
-                    this._cityName = weatherModel.weather.cityName;
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          WeatherWidget(
-                            weather: weatherModel.weather,
-                          ),
-                          
-                          Padding(
-                            padding: EdgeInsets.all(10),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.all(20),
-                          ),
-                        ]
-                      );
-                  } else if (weatherModel.weatherState == 'error') {
-                    String errorText = 'Please select a city';
-                    if (weatherModel.weatherState == 'error' && weatherModel.errorCode == 404) {
-                        errorText = 'Trouble fetching weather for $_cityName';
-                    }
-                    return Column(
+                if (weatherModel.weatherState == 'loaded') {
+                  this._cityName = weatherModel.weather.cityName;
+                  return Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Icon(
-                          Icons.error_outline,
-                          color: Colors.redAccent,
-                          size: 36,
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          errorText,
-                          style: TextStyle(
-                              color: Colors.redAccent,
-                              fontSize: 24
-                          ),
+                        WeatherWidget(
+                          weather: weatherModel.weather,
                         ),
                         Padding(
-                          child: Divider(
-                            color:
-                                Colors.white.withAlpha(50),
-                          ),
                           padding: EdgeInsets.all(10),
                         ),
-                        RaisedButton(
-                          child: Text(
-                            "Set city from location",
-                            style: TextStyle(
-                                color: Colors.redAccent),
-                          ),
-                          onPressed: _fetchWeatherWithCity(),
-                        )
-                      ],
-                    );
-                  } else {
-                    return Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
                         Padding(
-                          padding: const EdgeInsets.only(top: 200.0),
+                          padding: EdgeInsets.all(20),
                         ),
-                        Text(
-                          'Loading',
-                          style: TextStyle(
+                      ]);
+                } else if (weatherModel.weatherState == 'error') {
+                  String errorText = 'Please select a city';
+                  if (weatherModel.weatherState == 'error' &&
+                      weatherModel.errorCode == 404) {
+                    errorText = 'Trouble fetching weather for $_cityName';
+                  }
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(
+                        Icons.error_outline,
+                        color: Colors.redAccent,
+                        size: 36,
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        errorText,
+                        style: TextStyle(color: Colors.redAccent, fontSize: 24),
+                      ),
+                      Padding(
+                        child: Divider(
+                          color: Colors.white.withAlpha(50),
+                        ),
+                        padding: EdgeInsets.all(10),
+                      ),
+                      ElevatedButton(
+                        child: Text(
+                          "Set city from location",
+                          style: TextStyle(color: Colors.redAccent),
+                        ),
+                        onPressed: _fetchWeatherWithCity(),
+                      )
+                    ],
+                  );
+                } else {
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(top: 200.0),
+                      ),
+                      Text(
+                        'Loading',
+                        style: TextStyle(
                             fontWeight: FontWeight.w500,
                             letterSpacing: 3,
                             fontSize: 50,
-                            color: Colors.white
-                          ),
-                        ),
-                      ],
-                    );
-                  }
-                }),
+                            color: Colors.white),
+                      ),
+                    ],
+                  );
+                }
+              }),
             ),
-          )
-        ),
+          )),
     );
   }
 
@@ -230,7 +219,7 @@ class _WeatherScreenState extends State<WeatherScreen> with TickerProviderStateM
     print('Reset forecast shared');
     print('Reset city shared');
 
-    final weatherModel = Provider.of<WeatherModel>(context);
+    final weatherModel = Provider.of<WeatherModel>(context, listen: false);
     weatherModel.setCity('');
     _cityName = '';
   }
@@ -248,7 +237,7 @@ class _WeatherScreenState extends State<WeatherScreen> with TickerProviderStateM
     //   print('1st: $value');
     // });
 
-    final weatherModel = Provider.of<WeatherModel>(context);
+    final weatherModel = Provider.of<WeatherModel>(context, listen: false);
 
     weatherModel.setCity(_cityName);
 
@@ -261,35 +250,30 @@ class _WeatherScreenState extends State<WeatherScreen> with TickerProviderStateM
   }
 
   Future<Position> _retrieveGeolocalization() async {
-    var permissionHandler = PermissionHandler();
+    Position position;
 
-    var permissionResult = await permissionHandler
-        .requestPermissions([PermissionGroup.locationWhenInUse]);
+    try {
+      var locationStatus = await Permission.location.request();
 
-    switch (permissionResult[PermissionGroup.locationWhenInUse]) {
-      case PermissionStatus.denied:
-      case PermissionStatus.unknown:
+      if (locationStatus.isDenied) {
         print('location permission denied');
-        _showLocationDeniedDialog(permissionHandler);
-        // throw Error();
+        _showLocationDeniedDialog();
+      }
+
+      position = await Geolocator.getCurrentPosition();
+    } catch (e) {
+      _showLocationDeniedDialog();
     }
-
-    GeolocationStatus geolocationStatus  = await Geolocator().checkGeolocationPermissionStatus();
-    debugPrint('Debug: $geolocationStatus');
-
-    Position position = await Geolocator()
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    debugPrint('Debug: $position');
 
     return position;
   }
 
   _refreshWeatherData() {
-    final weatherModel = Provider.of<WeatherModel>(context);
+    final weatherModel = Provider.of<WeatherModel>(context, listen: false);
     weatherModel.refreshWeather(0);
   }
 
-  void _showLocationDeniedDialog(PermissionHandler permissionHandler) {
+  void _showLocationDeniedDialog() {
     showDialog(
         context: context,
         barrierDismissible: true,
@@ -299,13 +283,13 @@ class _WeatherScreenState extends State<WeatherScreen> with TickerProviderStateM
             title: Text('Location is disabled :(',
                 style: TextStyle(color: Colors.black)),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 child: Text(
                   'Enable!',
                   style: TextStyle(color: Colors.green, fontSize: 16),
                 ),
                 onPressed: () {
-                  permissionHandler.openAppSettings();
+                  openAppSettings();
                   Navigator.of(context).pop();
                 },
               ),
@@ -323,7 +307,7 @@ class _WeatherScreenState extends State<WeatherScreen> with TickerProviderStateM
             backgroundColor: Colors.white,
             title: Text('Select city', style: TextStyle(color: Colors.black)),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 child: Text(
                   'ok',
                   style: TextStyle(color: Colors.black, fontSize: 16),

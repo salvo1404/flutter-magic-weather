@@ -27,7 +27,7 @@ class WeatherModel with ChangeNotifier {
   void setCity(String city) async {
     this.city = city;
 
-    if(city == '') {
+    if (city == '') {
       this.weatherState = 'empty';
     }
 
@@ -42,24 +42,25 @@ class WeatherModel with ChangeNotifier {
   void refreshWeather(int delay) async {
     await Future.delayed(Duration(seconds: delay));
     print('refresh');
-    if(this.city != '') {
+    if (this.city != '') {
       mapFetchWeatherToState();
     }
   }
 
   void mapFetchWeatherToState() async {
     try {
-        this.weather = await weatherRepository.getWeather(this.city, latitude: this.lat, longitude: this.long);
-        this.weatherState = 'loaded';
-      } catch (exception) {
-        print(exception);
-        if (exception is HTTPException) {
-          this.weatherState = 'error';
-          this.errorCode = exception.code;
-        } else {
-          this.weatherState = 'error';
-          this.errorCode = 500;
-        }
+      this.weather = await weatherRepository.getWeather(this.city,
+          latitude: this.lat, longitude: this.long);
+      this.weatherState = 'loaded';
+    } catch (exception) {
+      print(exception);
+      if (exception is HTTPException) {
+        this.weatherState = 'error';
+        this.errorCode = exception.code;
+      } else {
+        this.weatherState = 'error';
+        this.errorCode = 500;
+      }
     }
 
     notifyListeners();
@@ -77,7 +78,8 @@ class WeatherModel with ChangeNotifier {
 
       final forecastJson = prefs.getString('forecast') ?? '';
       print('Load Forecast: $forecastJson');
-      List<Weather> weathers = Weather.fromForecastJson(json.decode(forecastJson));
+      List<Weather> weathers =
+          Weather.fromForecastJson(json.decode(forecastJson));
       this.weather.forecast = weathers;
 
       this.city = this.weather.cityName;
@@ -150,42 +152,56 @@ class Weather {
   }
 
   static List<Weather> fromForecastJson(Map<String, dynamic> json) {
-    final weathers = List<Weather>();
+    final weathers = List<Weather>(); //Deprecated
     for (final item in json['list']) {
       weathers.add(Weather(
           time: item['dt'],
           temperature: Temperature(intToDouble(
             item['main']['temp'],
           )),
-          iconCode: item['weather'][0]['icon']
-      ));
+          iconCode: item['weather'][0]['icon']));
     }
     return weathers;
   }
 
-  IconData getIconData(){
-    switch(this.iconCode){
-      case '01d': return WeatherIcons.clear_day;
-      case '01n': return WeatherIcons.clear_night;
-      case '02d': return WeatherIcons.few_clouds_day;
-      case '02n': return WeatherIcons.few_clouds_day;
+  IconData getIconData() {
+    switch (this.iconCode) {
+      case '01d':
+        return WeatherIcons.clear_day;
+      case '01n':
+        return WeatherIcons.clear_night;
+      case '02d':
+        return WeatherIcons.few_clouds_day;
+      case '02n':
+        return WeatherIcons.few_clouds_day;
       case '03d':
       case '04d':
         return WeatherIcons.clouds_day;
       case '03n':
       case '04n':
         return WeatherIcons.clear_night;
-      case '09d': return WeatherIcons.shower_rain_day;
-      case '09n': return WeatherIcons.shower_rain_night;
-      case '10d': return WeatherIcons.rain_day;
-      case '10n': return WeatherIcons.rain_night;
-      case '11d': return WeatherIcons.thunder_storm_day;
-      case '11n': return WeatherIcons.thunder_storm_night;
-      case '13d': return WeatherIcons.snow_day;
-      case '13n': return WeatherIcons.snow_night;
-      case '50d': return WeatherIcons.mist_day;
-      case '50n': return WeatherIcons.mist_night;
-      default: return WeatherIcons.clear_day;
+      case '09d':
+        return WeatherIcons.shower_rain_day;
+      case '09n':
+        return WeatherIcons.shower_rain_night;
+      case '10d':
+        return WeatherIcons.rain_day;
+      case '10n':
+        return WeatherIcons.rain_night;
+      case '11d':
+        return WeatherIcons.thunder_storm_day;
+      case '11n':
+        return WeatherIcons.thunder_storm_night;
+      case '13d':
+        return WeatherIcons.snow_day;
+      case '13n':
+        return WeatherIcons.snow_night;
+      case '50d':
+        return WeatherIcons.mist_day;
+      case '50n':
+        return WeatherIcons.mist_night;
+      default:
+        return WeatherIcons.clear_day;
     }
   }
 }
