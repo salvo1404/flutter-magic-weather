@@ -18,19 +18,12 @@ class WeatherScreen extends StatefulWidget {
 class _WeatherScreenState extends State<WeatherScreen>
     with TickerProviderStateMixin {
   String _cityName = '';
-  // AnimationController _fadeController;
-  // Animation<double> _fadeAnimation;
+  bool isLocationActive = false;
 
   @override
   void initState() {
     super.initState();
     _setLocation();
-    // _fadeController = AnimationController(
-    //     duration: const Duration(milliseconds: 1000), vsync: this);
-    // _fadeAnimation =
-    //     CurvedAnimation(parent: _fadeController, curve: Curves.easeIn);
-
-    // _loadWeatherFromMemory();
   }
 
   @override
@@ -168,12 +161,13 @@ class _WeatherScreenState extends State<WeatherScreen>
                         padding: EdgeInsets.all(10),
                       ),
                       ElevatedButton(
-                        child: Text(
-                          "Set city from location",
-                          style: TextStyle(color: Colors.redAccent),
-                        ),
-                        onPressed: _fetchWeather(),
-                      )
+                          child: Text(
+                            "Set city from location",
+                            style: TextStyle(color: Colors.redAccent),
+                          ),
+                          onPressed: () {
+                            _fetchWeather();
+                          })
                     ],
                   );
                 } else {
@@ -226,6 +220,9 @@ class _WeatherScreenState extends State<WeatherScreen>
     Position position = await _retrieveGeolocalization();
     weatherModel.setLocation(position.latitude, position.longitude);
     print('Set location from GPS');
+    setState(() {
+      this.isLocationActive = true;
+    });
   }
 
   _fetchWeatherFromCache() async {
@@ -233,27 +230,24 @@ class _WeatherScreenState extends State<WeatherScreen>
     weatherModel.setWeatherFromCache();
   }
 
-  _fetchWeatherWithCity() async {
-    print('Fetching weather with city');
-
-    final weatherModel = Provider.of<WeatherModel>(context, listen: false);
-
-    weatherModel.setCity(_cityName);
-
-    weatherModel.setWeatherFromLocation();
-  }
-
-  _fetchWeather() async {
+  _fetchWeather({useCache = true}) async {
     print('Fetching weather');
 
     final weatherModel = Provider.of<WeatherModel>(context, listen: false);
 
-    weatherModel.setWeatherFromCache();
+    if (useCache) {
+      weatherModel.setWeatherFromCache();
 
-    await Future.delayed(Duration(seconds: 2));
+      await Future.delayed(Duration(seconds: 1));
 
-    if (weatherModel.weatherState == 'cached') {
-      print('Wheather fetched from cache');
+      if (weatherModel.weatherState == 'cached') {
+        print('Wheather fetched from cache');
+        return;
+      }
+    }
+
+    if (!this.isLocationActive) {
+      print('Location is not active');
       return;
     }
 
@@ -336,7 +330,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                   style: TextStyle(color: Colors.black, fontSize: 16),
                 ),
                 onPressed: () {
-                  _fetchWeatherWithCity();
+                  _fetchWeather(useCache: false);
                   Navigator.of(context).pop();
                 },
               ),

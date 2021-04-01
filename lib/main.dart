@@ -40,7 +40,10 @@ class WeatherApp extends StatelessWidget {
     return MaterialApp(
       title: 'Magic Weather App',
       theme: appModel.theme,
-      home: WeatherScreen(),
+      home: Scaffold(
+        backgroundColor: Colors.lightBlue,
+        body: WeatherScreen(),
+      ),
       routes: Routes.mainRoute,
     );
   }
