@@ -30,8 +30,6 @@ class WeatherModel with ChangeNotifier {
     if (city == '') {
       this.weatherState = 'empty';
     }
-
-    // notifyListeners();
   }
 
   void setLocation(double lat, double long) async {

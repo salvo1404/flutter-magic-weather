@@ -20,7 +20,7 @@ class WeatherWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Padding(
-          padding: EdgeInsets.all(20),
+          padding: EdgeInsets.all(30),
         ),
         Text(
           this.weather.cityName,

@@ -108,100 +108,107 @@ class _WeatherScreenState extends State<WeatherScreen>
                       ])
             ],
           ),
-          body: Container(
-            constraints: BoxConstraints.expand(),
-            child: SingleChildScrollView(
-              child:
-                  Consumer<WeatherModel>(builder: (context, weatherModel, _) {
-                print(
-                    'Weather Model render. Weather State = ${weatherModel.weatherState}');
+          body: RefreshIndicator(
+            backgroundColor: Color(0x00000000),
+            color: Colors.white,
+            displacement: 0,
+            strokeWidth: 1,
+            onRefresh: _pullToRefresh,
+            child: Container(
+              constraints: BoxConstraints.expand(),
+              child: SingleChildScrollView(
+                child:
+                    Consumer<WeatherModel>(builder: (context, weatherModel, _) {
+                  print(
+                      'Weather Model render. Weather State = ${weatherModel.weatherState}');
 
-                switch (weatherModel.weatherState) {
-                  case 'cached':
-                    {
-                      this._cityName = weatherModel.weather.cityName;
-                      return Column(
+                  switch (weatherModel.weatherState) {
+                    case 'cached':
+                      {
+                        this._cityName = weatherModel.weather.cityName;
+                        return Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              WeatherWidget(
+                                weather: weatherModel.weather,
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(10),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(20),
+                              ),
+                            ]);
+                      }
+                      break;
+                    case 'error':
+                      {
+                        String errorText = 'Error fetching data';
+                        if (weatherModel.errorCode == 404) {
+                          errorText = 'Trouble fetching weather for $_cityName';
+                        }
+                        return Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            WeatherWidget(
-                              weather: weatherModel.weather,
+                            Padding(
+                              child: Divider(
+                                color: Colors.white.withAlpha(50),
+                              ),
+                              padding: EdgeInsets.all(100),
+                            ),
+                            Icon(
+                              Icons.error_outline,
+                              color: Colors.redAccent,
+                              size: 80,
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              errorText,
+                              style: TextStyle(
+                                  color: Colors.redAccent, fontSize: 36),
                             ),
                             Padding(
+                              child: Divider(
+                                color: Colors.white.withAlpha(50),
+                              ),
                               padding: EdgeInsets.all(10),
                             ),
-                            Padding(
-                              padding: EdgeInsets.all(20),
-                            ),
-                          ]);
-                    }
-                    break;
-                  case 'error':
-                    {
-                      String errorText = 'Error fetching data';
-                      if (weatherModel.errorCode == 404) {
-                        errorText = 'Trouble fetching weather for $_cityName';
+                            ElevatedButton(
+                                child: Text(
+                                  "Refresh location",
+                                  style: TextStyle(color: Colors.redAccent),
+                                ),
+                                onPressed: () {
+                                  _fetchWeather();
+                                })
+                          ],
+                        );
                       }
+                      break;
+
+                    default:
+                      _fetchWeather();
                       return Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Padding(
-                            child: Divider(
-                              color: Colors.white.withAlpha(50),
-                            ),
-                            padding: EdgeInsets.all(100),
-                          ),
-                          Icon(
-                            Icons.error_outline,
-                            color: Colors.redAccent,
-                            size: 80,
-                          ),
-                          SizedBox(
-                            height: 10,
+                            padding: const EdgeInsets.only(top: 200.0),
                           ),
                           Text(
-                            errorText,
+                            'Loading...',
                             style: TextStyle(
-                                color: Colors.redAccent, fontSize: 36),
+                                fontWeight: FontWeight.w500,
+                                letterSpacing: 3,
+                                fontSize: 50,
+                                color: Colors.white),
                           ),
-                          Padding(
-                            child: Divider(
-                              color: Colors.white.withAlpha(50),
-                            ),
-                            padding: EdgeInsets.all(10),
-                          ),
-                          ElevatedButton(
-                              child: Text(
-                                "Refresh location",
-                                style: TextStyle(color: Colors.redAccent),
-                              ),
-                              onPressed: () {
-                                _fetchWeather();
-                              })
                         ],
                       );
-                    }
-                    break;
-
-                  default:
-                    _fetchWeather();
-                    return Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(top: 200.0),
-                        ),
-                        Text(
-                          'Loading...',
-                          style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              letterSpacing: 3,
-                              fontSize: 50,
-                              color: Colors.white),
-                        ),
-                      ],
-                    );
-                }
-              }),
+                  }
+                }),
+              ),
             ),
           )),
     );
@@ -237,6 +244,13 @@ class _WeatherScreenState extends State<WeatherScreen>
     setState(() {
       this.isLocationActive = true;
     });
+  }
+
+  Future<void> _pullToRefresh() async {
+    await Future.delayed(Duration(seconds: 2));
+
+    print('Pull to refresh');
+    _fetchWeather(useCache: false);
   }
 
   _fetchWeather({useCache = true}) async {
