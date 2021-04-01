@@ -78,6 +78,7 @@ class WeatherModel with ChangeNotifier {
     print('Trying to load Weather from cache...');
 
     if (weatherJson == '') {
+      this.weatherState = 'empty';
       return;
     }
 
