@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:MagicWeather/models/weather_model.dart';
-import 'package:MagicWeather/widgets/value_tile.dart';
-import 'package:MagicWeather/utils/converters.dart';
+import 'package:magic_weather/models/weather_model.dart';
+import 'package:magic_weather/widgets/value_tile.dart';
+import 'package:magic_weather/utils/converters.dart';
 import 'package:intl/intl.dart';
 
 /// Renders a horizontal scrolling list of weather conditions
@@ -20,19 +20,18 @@ class ForecastHorizontal extends StatelessWidget {
     return Column(
       children: <Widget>[
         Padding(
-            padding: EdgeInsets.all(5),
-          ),
+          padding: EdgeInsets.all(5),
+        ),
         Container(
           height: 70,
-          
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             shrinkWrap: true,
             itemCount: this.weathers.length,
             separatorBuilder: (context, index) => Divider(
-                  height: 100,
-                  color: Colors.white,
-                ),
+              height: 100,
+              color: Colors.white,
+            ),
             padding: EdgeInsets.only(left: 5, right: 5),
             itemBuilder: (context, index) {
               final item = this.weathers[index];
@@ -50,8 +49,8 @@ class ForecastHorizontal extends StatelessWidget {
           ),
         ),
         Padding(
-            padding: EdgeInsets.all(5),
-          ),
+          padding: EdgeInsets.all(5),
+        ),
       ],
     );
   }

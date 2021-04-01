@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:MagicWeather/utils/themes.dart';
+import 'package:magic_weather/utils/themes.dart';
 
 import 'dart:math';
 
@@ -25,7 +25,7 @@ class AppModel {
   // Example of async
   Stream<double> getRandomValuesStream() async* {
     var random = Random(2);
-    
+
     await Future.delayed(Duration(seconds: 5));
     yield random.nextDouble();
   }

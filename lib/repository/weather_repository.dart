@@ -1,5 +1,5 @@
-import 'package:MagicWeather/utils/weather_api_client.dart';
-import 'package:MagicWeather/models/weather_model.dart';
+import 'package:magic_weather/utils/weather_api_client.dart';
+import 'package:magic_weather/models/weather_model.dart';
 import 'package:meta/meta.dart';
 
 class WeatherRepository {
@@ -7,7 +7,8 @@ class WeatherRepository {
   WeatherRepository({@required this.weatherApiClient})
       : assert(weatherApiClient != null);
 
-  Future<Weather> getWeather(String cityName,{double latitude, double longitude}) async {
+  Future<Weather> getWeather(String cityName,
+      {double latitude, double longitude}) async {
     if (cityName == '') {
       cityName = await weatherApiClient.getCityNameFromLocation(
           latitude: latitude, longitude: longitude);

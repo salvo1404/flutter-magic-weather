@@ -1,10 +1,10 @@
 import 'package:meta/meta.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
-import 'package:MagicWeather/utils/weather_icons.dart';
-import 'package:MagicWeather/utils/converters.dart';
-import 'package:MagicWeather/utils/http_exception.dart';
-import 'package:MagicWeather/repository/weather_repository.dart';
+import 'package:magic_weather/utils/weather_icons.dart';
+import 'package:magic_weather/utils/converters.dart';
+import 'package:magic_weather/utils/http_exception.dart';
+import 'package:magic_weather/repository/weather_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class WeatherModel with ChangeNotifier {

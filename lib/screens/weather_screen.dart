@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:MagicWeather/models/app_model.dart';
-import "package:MagicWeather/models/weather_model.dart";
+import 'package:magic_weather/models/app_model.dart';
+import "package:magic_weather/models/weather_model.dart";
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-import 'package:MagicWeather/widgets/weather_widget.dart';
+import 'package:magic_weather/widgets/weather_widget.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';

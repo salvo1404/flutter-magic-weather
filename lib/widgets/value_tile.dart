@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:MagicWeather/models/app_model.dart';
+import 'package:magic_weather/models/app_model.dart';
 
 /// General utility widget used to render a cell divided into three rows
 /// First row displays [label]
@@ -36,14 +36,17 @@ class ValueTile extends StatelessWidget {
                 color: Provider.of<AppModel>(context).theme.accentColor,
                 size: 20,
               )
-            : Container(width: 0, height: 0,),
+            : Container(
+                width: 0,
+                height: 0,
+              ),
         SizedBox(
           height: 10,
         ),
         Text(
           this.value,
-          style:
-              TextStyle(color: Provider.of<AppModel>(context).theme.accentColor),
+          style: TextStyle(
+              color: Provider.of<AppModel>(context).theme.accentColor),
         ),
       ],
     );
