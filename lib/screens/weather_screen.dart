@@ -24,6 +24,7 @@ class _WeatherScreenState extends State<WeatherScreen>
   @override
   void initState() {
     super.initState();
+    _setLocation();
     // _fadeController = AnimationController(
     //     duration: const Duration(milliseconds: 1000), vsync: this);
     // _fadeAnimation =
@@ -57,24 +58,24 @@ class _WeatherScreenState extends State<WeatherScreen>
                   children: <Widget>[
                     ElevatedButton(
                       child: Text(
-                        "Fetch data",
+                        "Reload (cache)",
                         style: TextStyle(color: Colors.redAccent),
                       ),
-                      onPressed: _fetchWeatherWithCity,
+                      onPressed: _fetchWeatherFromCache,
                     ),
                     ElevatedButton(
                       child: Text(
-                        "Refresh",
+                        "Pull Fresh Data",
                         style: TextStyle(color: Colors.redAccent),
                       ),
                       onPressed: _refreshWeatherData,
                     ),
                     ElevatedButton(
                       child: Text(
-                        "Reset City",
+                        "Reset cache",
                         style: TextStyle(color: Colors.redAccent),
                       ),
-                      onPressed: _resetWeatherCity,
+                      onPressed: _resetWeatherCache,
                     ),
                   ],
                 ),
@@ -119,12 +120,13 @@ class _WeatherScreenState extends State<WeatherScreen>
             child: SingleChildScrollView(
               child:
                   Consumer<WeatherModel>(builder: (context, weatherModel, _) {
+                print(
+                    'Weather Model render. Weather State = ${weatherModel.weatherState}');
                 if (weatherModel.weatherState == 'empty') {
-                  weatherModel.loadWeatherFromShared();
-                  weatherModel.refreshWeather(2);
+                  _fetchWeather();
                 }
 
-                if (weatherModel.weatherState == 'loaded') {
+                if (weatherModel.weatherState == 'cached') {
                   this._cityName = weatherModel.weather.cityName;
                   return Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -141,8 +143,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                       ]);
                 } else if (weatherModel.weatherState == 'error') {
                   String errorText = 'Please select a city';
-                  if (weatherModel.weatherState == 'error' &&
-                      weatherModel.errorCode == 404) {
+                  if (weatherModel.errorCode == 404) {
                     errorText = 'Trouble fetching weather for $_cityName';
                   }
                   return Column(
@@ -171,7 +172,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                           "Set city from location",
                           style: TextStyle(color: Colors.redAccent),
                         ),
-                        onPressed: _fetchWeatherWithCity(),
+                        onPressed: _fetchWeather(),
                       )
                     ],
                   );
@@ -210,7 +211,7 @@ class _WeatherScreenState extends State<WeatherScreen>
     }
   }
 
-  _resetWeatherCity() async {
+  _resetWeatherCache() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.remove('weather');
     prefs.remove('forecast');
@@ -218,35 +219,47 @@ class _WeatherScreenState extends State<WeatherScreen>
     print('Reset weather shared');
     print('Reset forecast shared');
     print('Reset city shared');
+  }
 
+  _setLocation() async {
     final weatherModel = Provider.of<WeatherModel>(context, listen: false);
-    weatherModel.setCity('');
-    _cityName = '';
+    Position position = await _retrieveGeolocalization();
+    weatherModel.setLocation(position.latitude, position.longitude);
+    print('Set location from GPS');
+  }
+
+  _fetchWeatherFromCache() async {
+    final weatherModel = Provider.of<WeatherModel>(context, listen: false);
+    weatherModel.setWeatherFromCache();
   }
 
   _fetchWeatherWithCity() async {
-    /**
-     * Example of stream and async
-     */
-    // final appModel = Provider.of<AppModel>(context);
-    // debugPrint('Debug: $appModel');
-    // var value1 = await appModel.getRandomValue();
-    // var value2 = await appModel.getRandomValue();
-
-    // appModel.getRandomValuesStream().listen((value) {
-    //   print('1st: $value');
-    // });
+    print('Fetching weather with city');
 
     final weatherModel = Provider.of<WeatherModel>(context, listen: false);
 
     weatherModel.setCity(_cityName);
 
-    if (_cityName == '') {
-      Position position = await _retrieveGeolocalization();
-      weatherModel.setLocation(position.latitude, position.longitude);
+    weatherModel.setWeatherFromLocation();
+  }
+
+  _fetchWeather() async {
+    print('Fetching weather');
+
+    final weatherModel = Provider.of<WeatherModel>(context, listen: false);
+
+    weatherModel.setWeatherFromCache();
+
+    await Future.delayed(Duration(seconds: 2));
+
+    if (weatherModel.weatherState == 'cached') {
+      print('Wheather fetched from cache');
+      return;
     }
 
-    weatherModel.mapFetchWeatherToState();
+    weatherModel.setCity(_cityName);
+
+    weatherModel.setWeatherFromLocation();
   }
 
   Future<Position> _retrieveGeolocalization() async {
@@ -309,7 +322,17 @@ class _WeatherScreenState extends State<WeatherScreen>
             actions: <Widget>[
               TextButton(
                 child: Text(
-                  'ok',
+                  'Cancel',
+                  style: TextStyle(color: Colors.black, fontSize: 16),
+                ),
+                onPressed: () {
+                  _refreshWeatherData();
+                  Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                child: Text(
+                  'Ok',
                   style: TextStyle(color: Colors.black, fontSize: 16),
                 ),
                 onPressed: () {

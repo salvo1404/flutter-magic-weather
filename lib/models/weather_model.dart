@@ -31,7 +31,7 @@ class WeatherModel with ChangeNotifier {
       this.weatherState = 'empty';
     }
 
-    notifyListeners();
+    // notifyListeners();
   }
 
   void setLocation(double lat, double long) async {
@@ -41,17 +41,22 @@ class WeatherModel with ChangeNotifier {
 
   void refreshWeather(int delay) async {
     await Future.delayed(Duration(seconds: delay));
-    print('refresh');
-    if (this.city != '') {
-      mapFetchWeatherToState();
+    print('Pull fresh weather data');
+
+    if (this.city == '' && (this.lat == 0.0 && this.long == 0.0)) {
+      return;
     }
+
+    setWeatherFromLocation();
   }
 
-  void mapFetchWeatherToState() async {
+  void setWeatherFromLocation() async {
+    print('Trying to set weather From Location');
+
     try {
       this.weather = await weatherRepository.getWeather(this.city,
           latitude: this.lat, longitude: this.long);
-      this.weatherState = 'loaded';
+      this.weatherState = 'cached';
     } catch (exception) {
       print(exception);
       if (exception is HTTPException) {
@@ -66,33 +71,30 @@ class WeatherModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void loadWeatherFromShared() async {
+  void setWeatherFromCache() async {
     final prefs = await SharedPreferences.getInstance();
 
     final weatherJson = prefs.getString('weather') ?? '';
-    print('Load Weather: $weatherJson');
+    print('Trying to load Weather from cache...');
 
-    if (weatherJson != '') {
-      var weatherJsonString = json.decode(weatherJson);
-      this.weather = Weather.fromJson(weatherJsonString);
-
-      final forecastJson = prefs.getString('forecast') ?? '';
-      print('Load Forecast: $forecastJson');
-      List<Weather> weathers =
-          Weather.fromForecastJson(json.decode(forecastJson));
-      this.weather.forecast = weathers;
-
-      this.city = this.weather.cityName;
-      this.weatherState = 'loaded';
-      notifyListeners();
+    if (weatherJson == '') {
+      return;
     }
 
-    // infite loop of notifier
-    // final city = prefs.getString('city') ?? '';
-    // print('Load City: $city');
-    // if (city != '') {
-    //   setCity(city);
-    // }
+    var weatherJsonString = json.decode(weatherJson);
+    this.weather = Weather.fromJson(weatherJsonString);
+
+    final forecastJson = prefs.getString('forecast') ?? '';
+    print('Load Forecast: $forecastJson');
+    List<Weather> weathers =
+        Weather.fromForecastJson(json.decode(forecastJson));
+    this.weather.forecast = weathers;
+
+    this.city = this.weather.cityName;
+    this.weatherState = 'cached';
+
+    print('Loaded Weather from cache: $weatherJson');
+    notifyListeners();
   }
 }
 
